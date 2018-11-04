@@ -1,62 +1,101 @@
 import pygame
+from pygame.math import Vector2
+from math import tan, radians, degrees, copysign
 import numpy
 import time
 import config
-def main():
-    pygame.init()
-    gameDisplay = pygame.display.set_mode((config.display_width,config.display_height))
-    pygame.display.set_caption(config.title)
-    gameDisplay.fill(config.white)
-    clock = pygame.time.Clock()
-    all_sprites_list = pygame.sprite.Group(Car(config.display_width/2,config.display_height/2))
-    while True:
-        x = pygame.event.get()
-        for event in x:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.gameDisplay = pygame.display.set_mode((config.display_width,config.display_height))
+        pygame.display.set_caption(config.title)
+        self.gameDisplay.fill(config.white)
+        self.clock = pygame.time.Clock()
+        self.cars = pygame.sprite.Group()
+        #self.cars.add(Car(config.display_width/2,config.display_height/2))
+        self.car = Car(config.display_width/2,config.display_height/2)
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            for keypress in pygame.key.get_pressed():
+                if keypress == pygame.K_q:
                     pygame.quit()
                     quit()
 
-        gameDisplay.fill(config.white)
-        all_sprites_list.update(0,0)
+                elif keypress == pygame.K_UP:
+                    if self.car.velocity.x < 0:
+                        self.car.acceleration = self.car.brake_deceleration
+                    else:
+                        self.car.acceleration += 1
+                elif keypress == pygame.K_DOWN:
+                    if self.car.velocity.x > 0:
+                        self.car.acceleration = -self.car.brake_deceleration
+                    else:
+                        self.car.acceleration -= 1
+                elif keypress == pygame.K_SPACE:
+                    if abs(self.car.velocity.x) > self.car.brake_deceleration:
+                        self.car.acceleration = -copysign(self.car.brake_deceleration, self.car.velocity.x)
+                    else:
+                        self.car.acceleration = -self.car.velocity.x
+                else:
+                    if abs(self.car.velocity.x) > config.free_deceleration:
+                        self.car.acceleration = -copysign(config.free_deceleration, self.car.velocity.x)
+                    else:
+                        self.car.acceleration = -self.car.velocity.x
+                self.car.acceleration = max(-config.max_acceleration, min(self.car.acceleration, config.max_acceleration))
 
-        all_sprites_list.draw(gameDisplay)
-        pygame.display.update()
+            if keypress == pygame.K_RIGHT:
+                self.car.steering -= 30
+            elif keypress == pygame.K_LEFT:
+                self.car.steering += 30
+            else:
+                self.car.steering = 0
+            self.car.steering = max(-config.max_steering, min(self.car.steering, config.max_steering))
 
-    pygame.quit()
+
+            self.cars.update()
+            self.gameDisplay.fill(config.white)
+            self.cars.draw(self.gameDisplay)
+            pygame.display.update()
+            self.clock.tick(config.fps)
+
+        pygame.quit()
 
 class Car(pygame.sprite.Sprite):
-    def __init__(self,pos_x,pos_y):
+    def __init__(self, x, y, angle=0.0, length=4):
         super().__init__()
-        self.image = pygame.image.load("assets/car.png").convert()
-        self.image = pygame.transform.rotate(self.image, 10)
+        self.position = Vector2(x, y)
+        self.velocity = Vector2(0.0, 0.0)
+        self.angle = angle
+        self.length = length
+        self.image = pygame.image.load(config.car_spirte_location)
         self.rect = self.image.get_rect()
-        self.momentum = Momentum([0,0])
-        self.rect.x = pos_x - self.rect.width/2
-        self.rect.y = pos_y - self.rect.height/2
 
-    def update(self,acceleration_percentage,break_percentage):
-        #self.speed.accelerate(config.max_acceleration * acceleration_percentage)
-        self.rect.y += 10
-        self.rect.x += 10
+        self.acceleration = 0.0
+        self.steering = 0.0
 
-class Momentum():
-    def __init__(self,start_momentum):
-        self.speed = Vector2D(start_momentum)
-    def accelerate(acceleration):
-        self.speed.add(acceleration)
+    def update(self):
+        self.velocity += (self.acceleration, 0)
+        self.velocity.x = max(-config.max_velocity, min(self.velocity.x, config.max_velocity))
 
-class Vector2D():
-    def __init__(self,start_vector):
-        self.vector = start_vector
-    def add(vector):
-        self.vector += vector
+        if self.steering:
+            turning_radius = self.length / tan(radians(self.steering))
+            angular_velocity = self.velocity.x / turning_radius
+        else:
+            angular_velocity = 0
+
+        self.position += self.velocity.rotate(-self.angle)
+        self.angle += degrees(angular_velocity)
+        self.image = pygame.transform.rotate(self.image, self.car.angle)
+
+
 
 
 
 
 if __name__ == "__main__":
-    main()
+    game = Game()
+    game.run()

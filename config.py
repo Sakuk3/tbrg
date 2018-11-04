@@ -4,8 +4,13 @@ display_height = 900
 fps = 60
 title = "tbrg"
 
-max_acceleration = 3
-max_speed = 10
+#Sprites
+car_spirte_location = "assets/car_32x.png"
+max_acceleration = 5
+max_velocity = 10
+max_steering = 30
+free_deceleration = 2
+brake_deceleration = 10
 friction = 1
 
 black = (0,0,0)

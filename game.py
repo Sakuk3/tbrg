@@ -71,7 +71,7 @@ class Car(pygame.sprite.Sprite):
         self.velocity = Vector2(0.0, 0.0)
         self.angle = angle
         self.length = length
-        self.image = pygame.image.load(config.car_spirte_location)
+        self.image = pygame.image.load(config.car_sprite_location)
         self.rect = self.image.get_rect()
 
         self.acceleration = 0.0
@@ -92,7 +92,26 @@ class Car(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, self.car.angle)
 
 
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, friction=1.0, angle=0.0):
+        super().__init__()
+        self.image = pygame.image.load(image)
+        self.angle = angle
+        self.friction = friction
+        self.rect = self.image.get_rect()
+        
+    
+class Map:
+    def __init__(self, size_x, size_y):
+        self.size_x = size_x
+        self.size_y = size_y
 
+        grass_tile = Tile(config.tile_size, config.tile_size, config.grass_sprite_location)
+
+        self.map_matrix = [[grass_tile for x in range(size_x)] for y in range(size_y)]
+
+    def friction_at(self, x, y):
+        return self.map_matrix[x][y].friction
 
 
 

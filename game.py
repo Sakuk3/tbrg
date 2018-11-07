@@ -2,6 +2,7 @@ import pygame
 import time
 import config
 from car import Car
+from gui import GUI
 class Game:
     def __init__(self):
         pygame.init()
@@ -10,7 +11,8 @@ class Game:
         self.gameDisplay.fill(config.white)
         self.clock = pygame.time.Clock()
 
-        self.map = Map(100,50);
+        self.map = Map(100,50)
+        self.gui = GUI()
 
         self.cars = pygame.sprite.Group()
         self.player_car = Car(self.map.size_y/2*config.tile_size,self.map.size_x/2*config.tile_size)
@@ -29,30 +31,33 @@ class Game:
                         pygame.quit()
                         quit()
                     elif event.key == pygame.K_w:
-                        acceleration += 1
+                        self.gui.acceleration += 1
                     elif event.key == pygame.K_s:
-                        acceleration -= 1
+                        self.gui.acceleration -= 1
                     elif event.key == pygame.K_a:
-                        steering -= 1
+                        self.gui.steering -= 1
                     elif event.key == pygame.K_d:
-                        steering += 1
+                        self.gui.steering += 1
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_q:
                         pygame.quit()
                         quit()
                     elif event.key == pygame.K_w:
-                        acceleration -= 1
+                        self.gui.acceleration -= 1
                     elif event.key == pygame.K_s:
-                        acceleration += 1
+                        self.gui.acceleration += 1
                     elif event.key == pygame.K_a:
-                        steering += 1
+                        self.gui.steering += 1
                     elif event.key == pygame.K_d:
-                        steering -= 1
-            self.cars.update(acceleration,steering,breaking)
+                        self.gui.steering -= 1
+
+            self.cars.update(self.gui.acceleration,self.gui.steering,self.gui.breaking)
             self.gameDisplay.fill(config.white)
             self.map.draw(self.gameDisplay,self.player_car.position)
             self.cars.draw(self.gameDisplay)
+            self.gui.draw(self.gameDisplay)
             pygame.display.update()
+
             self.clock.tick(config.fps)
 
         pygame.quit()
@@ -84,12 +89,14 @@ class Map:
         for x in range(0,self.size_x):
             for y in range(0,self.size_y):
                 screen.blit(self.map_matrix[y][x].image,(x*config.tile_size,y*config.tile_size))
+        """
+        Draw Grid        
         for x in range(0,config.display_width,config.tile_size):
             pygame.draw.line(screen,config.black,(x,0),(x,config.display_height))
 
         for y in range(0,config.display_height,config.tile_size):
             pygame.draw.line(screen,config.black,(0,y),(config.display_width,y))
-
+        """
 if __name__ == "__main__":
     game = Game()
     game.run()

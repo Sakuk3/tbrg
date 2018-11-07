@@ -6,8 +6,8 @@ title = "tbrg"
 
 #Sprites
 car_sprite_location = "assets/car_32x.png"
-max_acceleration = 3
-max_velocity = 10
+max_acceleration = 1
+max_velocity = 15
 max_steering = 3
 free_deceleration = 0.1
 max_brake_deceleration = 10
@@ -19,4 +19,4 @@ red = (255,0,0)
 
 #Tiles
 tile_size = 16
-grass_sprite_location = "assets/curve45_16x.png"
+grass_sprite_location = "assets/grass_16x.png"

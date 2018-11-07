@@ -1,5 +1,5 @@
 display_width = 1600
-display_height = 900
+display_height = 800
 
 fps = 60
 title = "tbrg"
@@ -19,4 +19,4 @@ red = (255,0,0)
 
 #Tiles
 tile_size = 16
-grass_sprite_location = "assets/car_32x.png"
+grass_sprite_location = "assets/curve45_16x.png"

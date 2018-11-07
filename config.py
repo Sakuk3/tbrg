@@ -1,5 +1,5 @@
-display_width = 1600
-display_height = 900
+display_width = 400
+display_height = 400
 
 fps = 60
 title = "tbrg"

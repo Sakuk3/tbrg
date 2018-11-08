@@ -6,7 +6,7 @@ import config
 class Car(pygame.sprite.Sprite):
     def __init__(self, x, y, angle=0.0):
         super().__init__()
-        self.image = pygame.image.load(config.car_sprite_location)
+        self.image = pygame.image.load(config.car_sprite_location).convert_alpha()
         self.orig_image = self.image
         self.rect = self.image.get_rect()
         self.rect.x = x

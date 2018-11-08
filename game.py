@@ -55,7 +55,7 @@ class Game:
             self.gameDisplay.fill(config.white)
             self.map.draw(self.gameDisplay,self.player_car.position)
             self.cars.draw(self.gameDisplay)
-            self.gui.draw(self.gameDisplay)
+            self.gui.draw(self.gameDisplay,self.clock)
             pygame.display.update()
 
             self.clock.tick(config.fps)
@@ -67,7 +67,7 @@ class Game:
 class Tile(pygame.sprite.Sprite):
     def __init__(self, x, y, image, friction=1.0, angle=0.0):
         super().__init__()
-        self.image = pygame.image.load(image)
+        self.image = pygame.image.load(image).convert()
         self.angle = angle
         self.friction = friction
         self.rect = self.image.get_rect()
@@ -90,7 +90,7 @@ class Map:
             for y in range(0,self.size_y):
                 screen.blit(self.map_matrix[y][x].image,(x*config.tile_size,y*config.tile_size))
         """
-        Draw Grid        
+        Draw Grid
         for x in range(0,config.display_width,config.tile_size):
             pygame.draw.line(screen,config.black,(x,0),(x,config.display_height))
 
